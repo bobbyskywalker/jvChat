@@ -23,7 +23,9 @@ public class ClientHandler extends Thread {
             BufferedReader inBuf = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
 
             client.sendMsg(Server.SIGNATURE + "\n\nWelcome to jvChat " + client.getUsername() +
-                    "!\nTo change your username send \"username <new username>\"");
+                    "!\n* To change your username send \"username <new username>\" \n" +
+                    "* To send a message to a particular client, send \"privmsg <recipient_username> <message>\"\n" +
+                    "* To send a message to all clients, send \"msg <message>\"\n");
 
             String line;
             while ((line = inBuf.readLine()) != null) {
