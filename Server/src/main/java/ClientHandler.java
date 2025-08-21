@@ -22,7 +22,7 @@ public class ClientHandler extends Thread {
 
             String line;
             while ((line = in_buf.readLine()) != null) {
-                server.broadcastToAll(client, client.getUsername() + ": " + line);
+                CommandHandler.parseCmd(line, client, server);
             }
             System.out.println("\u001B[31m" + client.getUsername() + " DISCONNECTED\u001B[0m");
             server.removeClient(client);

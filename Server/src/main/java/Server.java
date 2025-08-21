@@ -3,6 +3,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Server {
     private ServerSocket servSocket;
@@ -35,6 +36,15 @@ public class Server {
 
     public void removeClient(Client client) {
         clients.remove(client);
+    }
+
+    public Client getClientByUsername(String username) {
+        for (Client cur : clients) {
+            if (Objects.equals(cur.getUsername(), username)) {
+                return cur;
+            }
+        }
+        return null;
     }
 
     public void broadcastToAll(Client excluded, String message) {
