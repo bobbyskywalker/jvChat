@@ -1,3 +1,5 @@
+package org.jvchat.client;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -5,13 +7,13 @@ import java.util.UUID;
 
 public class Client {
     private String username;
-    private final String ip_address;
+    private final String ipAddress;
     private Socket socket = null;
-    public PrintWriter out;
+    public final PrintWriter out;
 
-    public Client(String ip_address, Socket socket) throws IOException {
+    public Client(String ipAddress, Socket socket) throws IOException {
         this.username = makeDefaultUsername();
-        this.ip_address = ip_address;
+        this.ipAddress = ipAddress;
         this.socket = socket;
         out = new PrintWriter(socket.getOutputStream(), true);
     }
@@ -32,8 +34,8 @@ public class Client {
         this.username = username;
     }
 
-    public String getIp_address() {
-        return ip_address;
+    public String getIpAddress() {
+        return ipAddress;
     }
 
     public Socket getSocket() {

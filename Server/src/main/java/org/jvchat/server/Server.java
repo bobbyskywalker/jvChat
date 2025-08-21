@@ -1,3 +1,8 @@
+package org.jvchat.server;
+
+import org.jvchat.client.ClientHandler;
+import org.jvchat.client.Client;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;

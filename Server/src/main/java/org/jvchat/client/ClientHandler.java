@@ -1,3 +1,8 @@
+package org.jvchat.client;
+
+import org.jvchat.util.CommandHandler;
+import org.jvchat.server.Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

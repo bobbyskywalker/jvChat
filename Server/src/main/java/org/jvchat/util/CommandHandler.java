@@ -1,3 +1,8 @@
+package org.jvchat.util;
+
+import org.jvchat.client.Client;
+import org.jvchat.server.Server;
+
 public class CommandHandler {
 
     private CommandHandler() {}
