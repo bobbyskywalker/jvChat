@@ -1,4 +1,9 @@
-public class ClientHandler {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
+public class ClientHandler extends Thread {
 
     private final Client client;
     private final Server server;
@@ -7,4 +12,26 @@ public class ClientHandler {
         this.client = client;
         this.server = server;
     }
+
+    @Override
+    public void run() {
+        try {
+            BufferedReader in_buf = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
+            PrintWriter out = new PrintWriter(client.getSocket().getOutputStream(), true);
+
+            out.println(server.signature + "\n\nWelcome to jvChat " + client.getUsername() +
+                    "!\nTo change your username send \"username <new username>\"");
+
+            String line;
+            while ((line = in_buf.readLine()) != null) {
+                System.out.println(client.getUsername() + ": " + line);
+            }
+            System.out.println("\u001B[31m" + client.getUsername() + " DISCONNECTED\u001B[0m");
+            server.removeClient(client);
+        } catch (IOException e) {
+            server.removeClient(client);
+            e.printStackTrace();
+        }
+    }
+
 }
