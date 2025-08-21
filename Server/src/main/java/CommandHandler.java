@@ -1,21 +1,23 @@
 public class CommandHandler {
 
-    /* Utility function to strip N tokens from the beggining of a string
+    private CommandHandler() {}
+
+    /* Utility function to strip N tokens from the beginning of a string
     * @param line_split: split string
     * @param start_from: the starting token for the final string
     * @return: tokens concatenated into a single string, space separated
     */
-    private static String stripCmdFromMsg(String[] line_split, int start_from) {
+    private static String stripCmdFromMsg(String[] lineSplit, int startFrom) {
         StringBuilder res = new StringBuilder();
-        for (int i = start_from; i < line_split.length; i++) {
-            res.append(line_split[i]);
-            if (i != line_split.length - 1)
+        for (int i = startFrom; i < lineSplit.length; i++) {
+            res.append(lineSplit[i]);
+            if (i != lineSplit.length - 1)
                 res.append(" ");
         }
         return res.toString();
     }
 
-    public static void parseCmd(String line, Client requester, Server serv) {
+    public static void execCmd(String line, Client requester, Server serv) {
         String[] res = line.split(" ");
         if (res.length < 2) {
             requester.sendMsg("[SERVER] Request Error: Too few command arguments.");

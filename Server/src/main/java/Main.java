@@ -1,11 +1,11 @@
 public class Main {
-    public static void main(String[] Args) {
-        if (Args.length != 1) {
+    public static void main(String[] args) {
+        if (args.length != 1) {
             System.err.println("You need to pass the port number as the first argument.");
             System.exit(0);
         }
         try {
-            int port = Integer.parseInt(Args[0]);
+            int port = Integer.parseInt(args[0]);
             Server serv = new Server(port);
             serv.runServer();
         } catch (Exception e) {

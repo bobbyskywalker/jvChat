@@ -15,14 +15,14 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         try {
-            BufferedReader in_buf = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
+            BufferedReader inBuf = new BufferedReader(new InputStreamReader(client.getSocket().getInputStream()));
 
-            client.sendMsg(server.signature + "\n\nWelcome to jvChat " + client.getUsername() +
+            client.sendMsg(Server.SIGNATURE + "\n\nWelcome to jvChat " + client.getUsername() +
                     "!\nTo change your username send \"username <new username>\"");
 
             String line;
-            while ((line = in_buf.readLine()) != null) {
-                CommandHandler.parseCmd(line, client, server);
+            while ((line = inBuf.readLine()) != null) {
+                CommandHandler.execCmd(line, client, server);
             }
             System.out.println("\u001B[31m" + client.getUsername() + " DISCONNECTED\u001B[0m");
             server.removeClient(client);

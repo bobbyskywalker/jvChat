@@ -7,20 +7,22 @@ import java.util.Objects;
 
 public class Server {
     private ServerSocket servSocket;
-    private static int port;
     private List<Client> clients = new ArrayList<>();
-    public String signature = "+---------------------------------------------+\n" +
-            "|       _          ______ __            _     |\n" +
-            "|      (_)       .' ___  [  |          / |_   |\n" +
-            "|      __ _   __/ .'   \\_|| |--.  ,--.`| |-'  |\n" +
-            "|     [  [ \\ [  | |       | .-. |`'_\\ :| |    |\n" +
-            "|   _  | |\\ \\/ /\\ `.___.'\\| | | |// | || |,   |\n" +
-            "|  [ \\_| | \\__/  `.____ .[___]|__\\'-;__\\__/   |\n" +
-            "|   \\____/                                    |\n" +
-            "+---------------------------------------------+";
+    private volatile boolean running = true;
+    public static final String SIGNATURE =
+        """
+            +---------------------------------------------+
+            |       _          ______ __            _     |
+            |      (_)       .' ___  [  |          / |_   |
+            |      __ _   __/ .'   \\_|| |--.  ,--.`| |-'  |
+            |     [  [ \\ [  | |       | .-. |`'_\\ :| |    |
+            |   _  | |\\ \\/ /\\ `.___.'\\| | | |// | || |,   |
+            |  [ \\_| | \\__/  `.____ .[___]|__\\'-;__\\__/   |
+            |   \\____/                                    |
+            +---------------------------------------------+
+        """;
 
     public Server(int port) {
-        Server.port = port;
         try {
             servSocket = new ServerSocket(port);
         } catch (IOException e) {
@@ -55,12 +57,22 @@ public class Server {
         }
     }
 
+    private void closeServer() throws IOException {
+        running = false;
+        servSocket.close();
+    }
+
     public void runServer() throws IOException {
-        while (true) {
-            Socket clientSocket = servSocket.accept();
-            Client client = registerClient(clientSocket);
-            ClientHandler handler = new ClientHandler(client, this);
-            handler.start();
+        while (running) {
+            try {
+                Socket clientSocket = servSocket.accept();
+                Client client = registerClient(clientSocket);
+                ClientHandler handler = new ClientHandler(client, this);
+                handler.start();
+            } catch (IOException e) {
+                if (running)
+                    System.err.println("Error: " + e.getMessage());
+            }
         }
     }
 }
