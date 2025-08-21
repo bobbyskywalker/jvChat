@@ -6,42 +6,48 @@ import java.util.List;
 
 public class Server {
     private ServerSocket servSocket;
-    private DataInputStream instream;
-    private static final int port = 3000;
+    private static int port;
     private List<Client> clients = new ArrayList<>();
 
-    public Server() {
+    public String signature = "+---------------------------------------------+\n" +
+            "|       _          ______ __            _     |\n" +
+            "|      (_)       .' ___  [  |          / |_   |\n" +
+            "|      __ _   __/ .'   \\_|| |--.  ,--.`| |-'  |\n" +
+            "|     [  [ \\ [  | |       | .-. |`'_\\ :| |    |\n" +
+            "|   _  | |\\ \\/ /\\ `.___.'\\| | | |// | || |,   |\n" +
+            "|  [ \\_| | \\__/  `.____ .[___]|__\\'-;__\\__/   |\n" +
+            "|   \\____/                                    |\n" +
+            "+---------------------------------------------+";
+
+    public Server(int port) {
+        Server.port = port;
         try {
             servSocket = new ServerSocket(port);
-            initConnections();
         } catch (IOException e) {
             e.printStackTrace(); // logging tbd
         }
     }
 
-    private void initConnections() throws IOException {
-        Socket clientSocket = servSocket.accept();
-        instream = new DataInputStream(new BufferedInputStream(clientSocket.getInputStream()));
+    private Client registerClient(Socket clientSocket) {
         Client client = new Client(clientSocket.getInetAddress().getHostAddress(), clientSocket);
         clients.add(client);
-        readMsg();
-        close();
+        return client;
     }
 
-    private void close() throws IOException {
-        instream.close();
-        servSocket.close();
+    public void removeClient(Client client) {
+        clients.remove(client);
     }
 
-    private void readMsg() throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(instream));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+    public void broadcastToAll(Client excluded, String message) {
+
+    }
+
+    public void runServer() throws IOException {
+        while (true) {
+            Socket clientSocket = servSocket.accept();
+            Client client = registerClient(clientSocket);
+            ClientHandler handler = new ClientHandler(client, this);
+            handler.start();
         }
-    }
-
-    public static void main(String[] Args) {
-        new Server();
     }
 }
