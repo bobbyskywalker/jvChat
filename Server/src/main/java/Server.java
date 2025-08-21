@@ -8,7 +8,6 @@ public class Server {
     private ServerSocket servSocket;
     private static int port;
     private List<Client> clients = new ArrayList<>();
-
     public String signature = "+---------------------------------------------+\n" +
             "|       _          ______ __            _     |\n" +
             "|      (_)       .' ___  [  |          / |_   |\n" +
@@ -28,7 +27,7 @@ public class Server {
         }
     }
 
-    private Client registerClient(Socket clientSocket) {
+    private Client registerClient(Socket clientSocket) throws IOException {
         Client client = new Client(clientSocket.getInetAddress().getHostAddress(), clientSocket);
         clients.add(client);
         return client;
@@ -39,7 +38,11 @@ public class Server {
     }
 
     public void broadcastToAll(Client excluded, String message) {
-
+        for (Client current : clients) {
+            if (current == excluded)
+                continue;
+            current.sendMsg(message);
+        }
     }
 
     public void runServer() throws IOException {
