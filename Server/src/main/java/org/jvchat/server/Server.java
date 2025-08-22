@@ -16,21 +16,23 @@ import org.tinylog.Logger;
 public class Server {
     private ServerSocket servSocket;
     private final List<Client> clients = new ArrayList<>();
+    private final int port;
     private volatile boolean running = true;
     public static final String SIGNATURE =
-        """
-            +---------------------------------------------+
-            |       _          ______ __            _     |
-            |      (_)       .' ___  [  |          / |_   |
-            |      __ _   __/ .'   \\_|| |--.  ,--.`| |-'  |
-            |     [  [ \\ [  | |       | .-. |`'_\\ :| |    |
-            |   _  | |\\ \\/ /\\ `.___.'\\| | | |// | || |,   |
-            |  [ \\_| | \\__/  `.____ .[___]|__\\'-;__\\__/   |
-            |   \\____/                                    |
-            +---------------------------------------------+
-        """;
+            """
+                        +---------------------------------------------+
+                        |       _          ______ __            _     |
+                        |      (_)       .' ___  [  |          / |_   |
+                        |      __ _   __/ .'   \\_|| |--.  ,--.`| |-'  |
+                        |     [  [ \\ [  | |       | .-. |`'_\\ :| |    |
+                        |   _  | |\\ \\/ /\\ `.___.'\\| | | |// | || |,   |
+                        |  [ \\_| | \\__/  `.____ .[___]|__\\'-;__\\__/   |
+                        |   \\____/                                    |
+                        +---------------------------------------------+
+                    """;
 
     public Server(int port) {
+        this.port = port;
         try {
             servSocket = new ServerSocket(port);
         } catch (IOException _) {
@@ -71,10 +73,27 @@ public class Server {
 
     private void closeServer() throws IOException {
         running = false;
+        for (Client client : clients) {
+            client.getSocket().close();
+        }
         servSocket.close();
     }
 
     public void runServer() {
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Logger.warn("Shutdown signal (SIGINT) received. Attempting graceful shutdown...");
+
+            try {
+                closeServer();
+                Logger.info("Server shut down with no errors.");
+            } catch (IOException e) {
+                Logger.error(e, "Error while shutting down server");
+            }
+        }, "ShutdownThread"));
+
+        Logger.info("Server started on port {}", port);
+
         while (running) {
             try {
                 Socket clientSocket = servSocket.accept();
