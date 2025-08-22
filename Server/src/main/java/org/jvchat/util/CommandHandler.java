@@ -25,7 +25,7 @@ public class CommandHandler {
     public static void execCmd(String line, Client requester, Server serv) {
         String[] res = line.split(" ");
         if (res.length < 2) {
-            requester.sendMsg("[SERVER] Request Error: Too few command arguments.");
+            requester.sendMsg("\u001B[31m[SERVER] Request Error: Too few command arguments.\u001B[0m");
             return ;
         }
 
@@ -34,23 +34,23 @@ public class CommandHandler {
             case "privmsg":
                 Client recipient = serv.getClientByUsername(res[1]);
                 if (recipient == null) {
-                    requester.sendMsg("[SERVER] Request Error: No such user " + res[1]);
+                    requester.sendMsg("\u001B[31m[SERVER] Request Error: No such user " + res[1] + "\u001B[0m");
                 } else {
                     msg = stripCmdFromMsg(res, 2);
-                    recipient.sendMsg(requester.getUsername() + ": " + msg);
+                    recipient.sendMsg("\u001B[33m" + requester.getUsername() + "\u001B[0m: " + msg);
                 }
                 break;
             case "msg":
-                msg = stripCmdFromMsg(res, 0);
-                serv.broadcastToAll(requester, requester.getUsername() + ": " + msg);
+                msg = stripCmdFromMsg(res, 1);
+                serv.broadcastToAll(requester, "\u001B[33m" + requester.getUsername() + "\u001B[0m: " + msg);
                 break;
             case "username":
                 String newUsername = res[1];
                 requester.setUsername(newUsername);
-                requester.sendMsg("[SERVER] Username successfully changed to: " + newUsername);
+                requester.sendMsg("\u001B[34m[SERVER] Username successfully changed to: " + newUsername + "\u001B[0m");
                 break;
             default:
-                requester.sendMsg("[SERVER] Invalid command.");
+                requester.sendMsg("[\u001B[31mSERVER] Invalid command.\u001B[0m");
         }
     }
 }
