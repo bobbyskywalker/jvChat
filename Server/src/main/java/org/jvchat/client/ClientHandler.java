@@ -2,6 +2,7 @@ package org.jvchat.client;
 
 import org.jvchat.util.CommandHandler;
 import org.jvchat.server.Server;
+import org.tinylog.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -34,11 +35,11 @@ public class ClientHandler extends Thread {
             while ((line = inBuf.readLine()) != null) {
                 CommandHandler.execCmd(line, client, server);
             }
-            System.out.println("\u001B[31m" + client.getUsername() + " DISCONNECTED\u001B[0m");
+            Logger.info("Client: {} disconnected", client.getUsername());
             server.removeClient(client);
-        } catch (IOException e) {
+        } catch (IOException _) {
             server.removeClient(client);
-            e.printStackTrace();
+            Logger.error("System: connection failure");
         }
     }
 }

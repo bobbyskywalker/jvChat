@@ -2,6 +2,7 @@ package org.jvchat.util;
 
 import org.jvchat.client.Client;
 import org.jvchat.server.Server;
+import org.tinylog.Logger;
 
 public class CommandHandler {
 
@@ -52,5 +53,6 @@ public class CommandHandler {
             default:
                 requester.sendMsg("[\u001B[31mSERVER] Invalid command.\u001B[0m");
         }
+        Logger.info("Line {} received from client {}", line, requester.getUsername());
     }
 }

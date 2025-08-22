@@ -5,10 +5,11 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.UUID;
 
+
 public class Client {
     private String username;
     private final String ipAddress;
-    private Socket socket = null;
+    private final Socket socket;
     public final PrintWriter out;
 
     public Client(String ipAddress, Socket socket) throws IOException {

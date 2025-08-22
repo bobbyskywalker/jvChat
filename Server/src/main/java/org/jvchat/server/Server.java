@@ -10,9 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.tinylog.Logger;
+
+
 public class Server {
     private ServerSocket servSocket;
-    private List<Client> clients = new ArrayList<>();
+    private final List<Client> clients = new ArrayList<>();
     private volatile boolean running = true;
     public static final String SIGNATURE =
         """
@@ -30,14 +33,18 @@ public class Server {
     public Server(int port) {
         try {
             servSocket = new ServerSocket(port);
-        } catch (IOException e) {
-            e.printStackTrace(); // logging tbd
+        } catch (IOException _) {
+            Logger.error("System: failed to create the server socket.");
         }
     }
 
     private Client registerClient(Socket clientSocket) throws IOException {
-        Client client = new Client(clientSocket.getInetAddress().getHostAddress(), clientSocket);
+        var address = clientSocket.getInetAddress().getHostAddress();
+        Client client = new Client(address, clientSocket);
         clients.add(client);
+
+        Logger.info("Client [{}] connected from {}", client.getUsername(), address);
+
         return client;
     }
 
@@ -67,7 +74,7 @@ public class Server {
         servSocket.close();
     }
 
-    public void runServer() throws IOException {
+    public void runServer() {
         while (running) {
             try {
                 Socket clientSocket = servSocket.accept();
@@ -76,7 +83,7 @@ public class Server {
                 handler.start();
             } catch (IOException e) {
                 if (running)
-                    System.err.println("Error: " + e.getMessage());
+                    Logger.error("System fail, exception: {}", (Object) e.getStackTrace());
             }
         }
     }
